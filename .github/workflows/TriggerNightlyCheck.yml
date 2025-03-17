@@ -11,7 +11,9 @@ on:
             type: string
         should_publish:
             type: string
-      
+permissions:
+  contents: write
+  issues: write
 jobs:
     on-workflow-dispatch:
         if: ${{ github.event_name == 'workflow_dispatch' }}
