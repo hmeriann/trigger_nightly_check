@@ -15,7 +15,7 @@ on:
 jobs:
     on-workflow-dispatch:
         if: ${{ github.event_name == 'workflow_dispatch' }}
-        uses: ./.github/workflows/NightlyBuildsCheck.yml
+        uses: hmeriann/duckdb-build-status/.github/workflows/NightlyBuildsCheck.yml@call-from-invoke
         with:
             branch: 'main'
             event: 'repository_dispatch'
@@ -23,7 +23,7 @@ jobs:
 
     run-main:
         if: ${{ github.event_name != 'workflow_dispatch' }}
-        uses: ./.github/workflows/NightlyBuildsCheck.yml
+        uses: hmeriann/duckdb-build-status/.github/workflows/NightlyBuildsCheck.yml@call-from-invoke
         with:
             branch: 'main'
             event: 'repository_dispatch'
@@ -31,7 +31,7 @@ jobs:
     
     run-release:
         if: ${{ github.event_name != 'workflow_dispatch' }}
-        uses: ./.github/workflows/NightlyBuildsCheck.yml
+        uses: hmeriann/duckdb-build-status/.github/workflows/NightlyBuildsCheck.yml@call-from-invoke
         with:
             branch: 'v1.2-histrionicus'
             event: 'workflow_dispatch'
