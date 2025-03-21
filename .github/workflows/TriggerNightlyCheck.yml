@@ -23,18 +23,13 @@ jobs:
             event: ${{ inputs.event }}
             should_publish: ${{ inputs.should_publish }}
 
-    run-main:
+    on-workflow-call:
+        strategy:
+            matrix:
+                config: [{"branch": "main", "event": "repository_dispatch", "should_publish": "true"}, {"branch": "v1.2-histrionicus", "event": "workflow_dispatch", "should_publish": "true"}, ]
         if: ${{ github.event_name != 'workflow_dispatch' }}
         uses: hmeriann/duckdb-build-status/.github/workflows/NightlyBuildsCheck.yml@call-from-invoke
         with:
-            branch: 'main'
-            event: 'repository_dispatch'
-            should_publish: 'true'
-    
-    run-release:
-        if: ${{ github.event_name != 'workflow_dispatch' }}
-        uses: hmeriann/duckdb-build-status/.github/workflows/NightlyBuildsCheck.yml@call-from-invoke
-        with:
-            branch: 'v1.2-histrionicus'
-            event: 'workflow_dispatch'
-            should_publish: 'true'
+            branch: ${{ matrix.config.branch }}
+            event: ${{ matrix.config.event }}
+            should_publish: ${{ matrix.config.should_publish }}
