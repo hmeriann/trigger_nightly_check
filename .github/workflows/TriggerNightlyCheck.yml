@@ -14,6 +14,7 @@ on:
 permissions:
   contents: write
   issues: write
+
 jobs:
     on-workflow-dispatch:
         if: ${{ github.event_name == 'workflow_dispatch' }}
@@ -35,6 +36,6 @@ jobs:
         steps:
             - name: Run Nightly build status
               run: |
-                export URL="https://api.github.con/repos/hmeriann/duckdb-build-status/.github/workflows/NightlyBuildsCheck.yml"
+                export URL="https://api.github.com/repos/hmeriann/duckdb-build-status/.github/workflows/NightlyBuildsCheck.yml"
                 export DATA="${{ matrix.config }}"
                 curl -v -XPOST -u "${PAT_USER}:${PAT_TOKEN}" -H "Accept: application/vnd.github.everest-preview+json" -H "Content-Type: application/json" $URL --data "$DATA"
