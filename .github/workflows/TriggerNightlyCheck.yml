@@ -33,3 +33,5 @@ jobs:
             branch: ${{ matrix.config.branch }}
             event: ${{ matrix.config.event }}
             should_publish: ${{ matrix.config.should_publish }}
+        secrets:
+            PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
