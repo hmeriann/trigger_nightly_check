@@ -22,6 +22,8 @@ jobs:
             branch: ${{ inputs.branch }}
             event: ${{ inputs.event }}
             should_publish: ${{ inputs.should_publish }}
+        secrets:
+            PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
 
     on-workflow-call:
         strategy:
