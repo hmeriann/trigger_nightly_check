@@ -13,7 +13,6 @@ on:
             type: string
 permissions:
   contents: write
-  issues: write
 jobs:
     on-workflow-dispatch:
         if: ${{ github.event_name == 'workflow_dispatch' }}
@@ -22,8 +21,8 @@ jobs:
             branch: ${{ inputs.branch }}
             event: ${{ inputs.event }}
             should_publish: ${{ inputs.should_publish }}
-        secrets:
-            PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+        # secrets:
+        #     PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
 
     on-workflow-call:
         strategy:
@@ -35,5 +34,5 @@ jobs:
             branch: ${{ matrix.config.branch }}
             event: ${{ matrix.config.event }}
             should_publish: ${{ matrix.config.should_publish }}
-        secrets:
-            PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+        # secrets:
+        #     PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
