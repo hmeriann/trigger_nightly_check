@@ -24,12 +24,17 @@ jobs:
             should_publish: ${{ inputs.should_publish }}
 
     on-workflow-call:
+        if: ${{ github.event_name != 'workflow_dispatch' }}
+        runs-on: ubuntu-latest
+        env:
+            PAT_USER: ${{ secrets.PAT_USER }}
+            PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         strategy:
             matrix:
                 config: [{"branch": "main", "event": "repository_dispatch", "should_publish": "true"}, {"branch": "v1.2-histrionicus", "event": "workflow_dispatch", "should_publish": "true"}, ]
-        if: ${{ github.event_name != 'workflow_dispatch' }}
-        uses: hmeriann/duckdb-build-status/.github/workflows/NightlyBuildsCheck.yml@call-from-invoke
-        with:
-            branch: ${{ matrix.config.branch }}
-            event: ${{ matrix.config.event }}
-            should_publish: ${{ matrix.config.should_publish }}
+        steps:
+            - name: Run Nightly build status
+              run: |
+                export URL="https://api.github.con/repos/hmeriann/duckdb-build-status/.github/workflows/NightlyBuildsCheck.yml"
+                export DATA="${{ matrix.config }}"
+                curl -v -XPOST -u "${PAT_USER}:${PAT_TOKEN}" -H "Accept: application/vnd.github.everest-preview+json" -H "Content-Type: application/json" $URL --data "$DATA"
