@@ -21,6 +21,7 @@ on:
             type: string
 permissions:
   contents: write
+  actions: write
   issues: write
 jobs:
     # on-workflow-dispatch:
