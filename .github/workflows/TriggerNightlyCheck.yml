@@ -11,6 +11,14 @@ on:
             type: string
         should_publish:
             type: string
+  workflow_call:
+    inputs:
+        branch:
+            type: string
+        event:
+            type: string
+        should_publish:
+            type: string
 permissions:
   contents: write
   issues: write
@@ -24,12 +32,9 @@ jobs:
             should_publish: ${{ inputs.should_publish }}
 
     on-workflow-call:
-        strategy:
-            matrix:
-                config: [{"branch": "main", "event": "repository_dispatch", "should_publish": "true"}, {"branch": "v1.2-histrionicus", "event": "workflow_dispatch", "should_publish": "true"}, ]
         if: ${{ github.event_name != 'workflow_dispatch' }}
         uses: hmeriann/duckdb-build-status/.github/workflows/NightlyBuildsCheck.yml@call-from-invoke
         with:
-            branch: ${{ matrix.config.branch }}
-            event: ${{ matrix.config.event }}
-            should_publish: ${{ matrix.config.should_publish }}
+            branch: ${{ inputs.branch }}
+            event: ${{ inputs.event }}
+            should_publish: ${{ inputs.should_publish }}
