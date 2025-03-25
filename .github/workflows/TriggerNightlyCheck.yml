@@ -22,8 +22,6 @@ jobs:
             branch: ${{ inputs.branch }}
             event: ${{ inputs.event }}
             should_publish: ${{ inputs.should_publish }}
-        # secrets:
-        #     PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
 
     on-workflow-call:
         strategy:
@@ -35,5 +33,3 @@ jobs:
             branch: ${{ matrix.config.branch }}
             event: ${{ matrix.config.event }}
             should_publish: ${{ matrix.config.should_publish }}
-        # secrets:
-        #     PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
