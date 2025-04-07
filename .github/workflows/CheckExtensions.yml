@@ -37,19 +37,19 @@ jobs:
           for platform in ${platforms[@]}; do
               for extension in ${extensions[@]}; do
                 # Correcting the condition to check if release_v is empty or not
-                if [ -z "$release_v" ]; then
-                  wget -q https://duckdb-extensions.s3.us-east-2.amazonaws.com/$sha/${platform}/${extension}.duckdb_extension.gz
-                else  
+                if [ -n "$release_v" ]; then
                   wget -q https://duckdb-extensions.s3.us-east-2.amazonaws.com/$release_v/${platform}/${extension}.duckdb_extension.gz
+                else  
+                  wget -q https://duckdb-extensions.s3.us-east-2.amazonaws.com/$sha/${platform}/${extension}.duckdb_extension.gz
                 fi
                 gzip -d ${extension}.duckdb_extension.gz
                 hexdump -C ${extension}.duckdb_extension | tail -n 30 | awk -F'|' '{print $2}' | tr -d '\n' > ${extension}-${sha}-${platform}.txt
                 
                 # Set the value of to_grep based on whether release_v is empty
-                if [ -z "$release_v" ]; then  
-                  to_grep="$sha"
-                else
+                if [ -n "$release_v" ]; then  
                   to_grep="$release_v"
+                else
+                  to_grep="$sha"
                 fi
                 
                 # Check if the extracted file contains the string we are looking for
