@@ -1,7 +1,7 @@
 #!/bin/bash
 
-release_v="v1.2.2"
-sha="ee8634984e"
+release_v=$release_v
+sha=$sha
 scope=("duckdb-extensions" "duckdb-community-extensions")
 platforms=("linux_amd64" "linux_amd64_gcc4" "linux_amd64_musl" "linux_arm64" "linux_arm64_gcc4" "osx_amd64" "osx_arm64" "windows_amd64" "windows_amd64_mingw")
 extensions=('arrow' 'autocomplete' 'aws' 'azure' 'delta' 'excel' 'fts' 'httpfs' 'iceberg' 'icu' 'inet' 'jemalloc' 'json' 'motherduck' 'mysql_scanner' 'parquet' 'postgres_scanner' 'shell' 'spatial' 'sqlite_scanner' 'sqlsmith' 'substrait' 'tpcds' 'tpch' 'vss')
