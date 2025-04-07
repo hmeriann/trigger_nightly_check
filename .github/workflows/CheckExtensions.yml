@@ -1,0 +1,28 @@
+name: Check Nightly Build Status
+on:
+  workflow_dispatch:
+  push:
+  schedule:
+    - cron:  '0 8 * * *' # runs at 9am CET (summer) (replace the las * with 1-5 to trigger only on working days)
+
+permissions:
+  contents: write
+  issues: write
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  GH_REPO: duckdb/duckdb
+  GH_ISSUE_REPO: ${{ github.repository }}
+
+jobs:
+  check-wget:
+    name: Check in advance
+    runs-on: macos-13
+    steps:
+      - name: Checkout repo with the scripts
+        uses: actions/checkout@v4
+      - shell: bash
+        run: chmod +x scripts/check_ext.sh && ./scripts/check_ext.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          path: log.csv
