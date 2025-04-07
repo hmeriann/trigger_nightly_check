@@ -33,14 +33,14 @@ jobs:
           
           for platform in ${platforms[@]}; do
               for extension in ${extensions[@]}; do
-                if [ ${{inputs.release_v}} ]; then
+                if [ -z ${{inputs.release_v}} ]; then
                   wget -q https://duckdb-extensions.s3.us-east-2.amazonaws.com/${{inputs.release_v}}/${platform}/${extension}.duckdb_extension.gz
                 else  
                   wget -q https://duckdb-extensions.s3.us-east-2.amazonaws.com/${{inputs.sha}}/${platform}/${extension}.duckdb_extension.gz
                 fi
                 gzip -d ${extension}.duckdb_extension.gz
                 hexdump -C ${extension}.duckdb_extension | tail -n 30 | awk -F'|' '{print $2}' | tr -d '\n' > ${extension}-${{inputs.sha}}-${platform}.txt
-                if  [ ${{inputs.release_v}} ]; then  
+                if  [ -z ${{inputs.release_v}} ]; then  
                   to_grep="${{inputs.release_v}}"
                 else
                   to_grep="${{inputs.sha}}"
