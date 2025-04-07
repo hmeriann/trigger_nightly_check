@@ -7,7 +7,7 @@ on:
       release_v:
         type: string
         required: false
-      
+
 permissions:
   contents: write
   issues: write
@@ -24,39 +24,47 @@ jobs:
     steps:
       - name: Checkout repo with the scripts
         uses: actions/checkout@v4
-      - shell: bash
+
+      - name: Run the script to check extensions
+        shell: bash
         run: |
-          sha="${{inputs.sha}}"
-          release_v="${{inputs.release_v}}"
+          sha="${{ inputs.sha }}"
+          release_v="${{ inputs.release_v }}"
           scope=("duckdb-extensions" "duckdb-community-extensions")
           platforms=("linux_amd64" "linux_amd64_gcc4" "linux_amd64_musl" "linux_arm64" "linux_arm64_gcc4" "osx_amd64" "osx_arm64" "windows_amd64" "windows_amd64_mingw")
           extensions=('arrow' 'autocomplete' 'aws' 'azure' 'delta' 'excel' 'fts' 'httpfs' 'iceberg' 'icu' 'inet' 'jemalloc' 'json' 'motherduck' 'mysql_scanner' 'parquet' 'postgres_scanner' 'shell' 'spatial' 'sqlite_scanner' 'sqlsmith' 'substrait' 'tpcds' 'tpch' 'vss')
-          
+
           for platform in ${platforms[@]}; do
               for extension in ${extensions[@]}; do
-                if [ -z $release_v ]; then
-                  wget -q https://duckdb-extensions.s3.us-east-2.amazonaws.com/${{inputs.sha}}/${platform}/${extension}.duckdb_extension.gz
+                # Correcting the condition to check if release_v is empty or not
+                if [ -z "$release_v" ]; then
+                  wget -q https://duckdb-extensions.s3.us-east-2.amazonaws.com/$sha/${platform}/${extension}.duckdb_extension.gz
                 else  
-                  wget -q https://duckdb-extensions.s3.us-east-2.amazonaws.com/${{inputs.release_v}}/${platform}/${extension}.duckdb_extension.gz
+                  wget -q https://duckdb-extensions.s3.us-east-2.amazonaws.com/$release_v/${platform}/${extension}.duckdb_extension.gz
                 fi
                 gzip -d ${extension}.duckdb_extension.gz
-                hexdump -C ${extension}.duckdb_extension | tail -n 30 | awk -F'|' '{print $2}' | tr -d '\n' > ${extension}-${{inputs.sha}}-${platform}.txt
-                if  [ -z $release_v ]; then  
-                  to_grep="${{inputs.sha}}"
+                hexdump -C ${extension}.duckdb_extension | tail -n 30 | awk -F'|' '{print $2}' | tr -d '\n' > ${extension}-${sha}-${platform}.txt
+                
+                # Set the value of to_grep based on whether release_v is empty
+                if [ -z "$release_v" ]; then  
+                  to_grep="$sha"
                 else
-                  to_grep="${{inputs.release_v}}"
+                  to_grep="$release_v"
                 fi
-                if (cat ${extension}-${{inputs.sha}}-${platform}.txt | grep -o $to_grep); then
-                    echo "${extension},${{inputs.sha}},${platform},passed"
-                    echo "${extension},${{inputs.sha}},${platform},passed" >> log.csv
+                
+                # Check if the extracted file contains the string we are looking for
+                if (cat ${extension}-${sha}-${platform}.txt | grep -o $to_grep); then
+                    echo "${extension},$sha,$platform,passed"
+                    echo "${extension},$sha,$platform,passed" >> log.csv
                 else
-                    echo "${extension},${{inputs.sha}},${platform},failed"
-                    echo "${extension},${{inputs.sha}},${platform},failed" >> log.csv
+                    echo "${extension},$sha,$platform,failed"
+                    echo "${extension},$sha,$platform,failed" >> log.csv
                 fi
                 rm ${extension}.duckdb_extension
-                rm ${extension}-${{inputs.sha}}-${platform}.txt
+                rm ${extension}-${sha}-${platform}.txt
               done
           done
+
       - uses: actions/upload-artifact@v4
         with:
           path: log.csv
