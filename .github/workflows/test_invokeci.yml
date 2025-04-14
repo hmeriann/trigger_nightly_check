@@ -76,7 +76,7 @@ jobs:
       should_publish: 'true'
 
   notify-specific-branch-on-external-repos:
-    uses: ./.github/workflows/NotifyExternalRepositories.yml
+    uses: ./.github/workflows/NotifyExternalRepositories.yml@main
     secrets: inherit
     needs:
       - osx
