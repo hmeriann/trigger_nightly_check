@@ -58,6 +58,7 @@ jobs:
       
   prepare-status:
     runs-on: ubuntu-latest
+    if: always()
     needs:
       - osx
       - linux-release
