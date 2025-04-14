@@ -56,9 +56,8 @@ jobs:
     steps:
       - run: return 1
       
-  notify-external-repos-main:
-    uses: hmeriann/duckdb/.github/workflows/NotifyExternalRepositories.yml@notify-nightly-build-status
-    secrets: inherit
+  prepare-status:
+    runs-on: ubuntu-latest
     needs:
       - osx
       - linux-release
@@ -68,28 +67,26 @@ jobs:
       - R
       - Wasm
       - static-libraries
-    if: ${{ inputs.git_ref == '' && always() }} 
-    with:
-      target-branch: ${{ github.ref_name }}
-      duckdb-sha: ${{ github.ref }}
-      triggering_event: ${{ github.event_name }}
-      should_publish: 'true'
+    if: success()
+    outputs:
+      is-success: ${{ steps.set-output.outputs.success }}
+    steps:
+      - id: set-output
+        run:
+          echo "success=true" >> $GITHUB_OUTPUT
+
+  notify-external-repos-main:
+    runs-on: ubuntu-latest
+    needs:
+      - prepare-status
+    if: ${{ inputs.git_ref == '' }} 
+    steps:
+      - run: echo ${{ needs.prepare-status.outputs.is-success }}
 
   notify-specific-branch-on-external-repos:
-    uses: hmeriann/duckdb/.github/workflows/NotifyExternalRepositories.yml@notify-nightly-build-status
-    secrets: inherit
+    runs-on: ubuntu-latest
     needs:
-      - osx
-      - linux-release
-      - windows
-      - python
-      - pyodide
-      - R
-      - Wasm
-      - static-libraries
-    if: always()
-    with:
-      target-branch: ${{ github.ref_name }}
-      duckdb-sha: ${{ inputs.git_ref }}
-      triggering_event: ${{ github.event_name }}
-      should_publish: 'true'
+      - prepare-status
+    if: ${{ inputs.git_ref != '' }} 
+    steps:
+      - run: echo ${{ needs.prepare-status.outputs.is-success }}
