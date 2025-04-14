@@ -89,34 +89,18 @@ jobs:
             echo "success=false" >> $GITHUB_OUTPUT;
           fi
 
-  random-job:
-    runs-on: ubuntu-latest
-    needs:
-      - prepare-status
-    if: ${{ !inputs.git_ref && always() }} 
-    steps:
-      - run: echo ${{ inputs.git_ref == '' }}
-
-  another-random-job:
-    runs-on: ubuntu-latest
-    needs:
-      - prepare-status
-    if: ${{ inputs.git_ref && always()}} 
-    steps:
-      - run: echo ${{ inputs.git_ref == '' }}
-
   notify-external-repos-main:
     runs-on: ubuntu-latest
     needs:
       - prepare-status
-    if: ${{ !inputs.git_ref }} 
+    if: ${{ inputs.git_ref == '' && always() }} 
     steps:
-      - run: echo ${{ inputs.git_ref == '' }}
+      - run: echo 'call notify-external-repos-main'
 
   notify-specific-branch-on-external-repos:
     runs-on: ubuntu-latest
     needs:
       - prepare-status
-    if: ${{ inputs.git_ref }} 
+    if: ${{ inputs.git_ref != '' && always() }} 
     steps:
-      - run: echo 🐶
+      - run: echo 'call notify-specific-branch-on-external-repos'
