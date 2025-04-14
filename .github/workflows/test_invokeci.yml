@@ -57,7 +57,7 @@ jobs:
       - run: return 1
       
   notify-external-repos-main:
-    uses: ./hmeriann/duckdb/.github/workflows/NotifyExternalRepositories.yml
+    uses: hmeriann/duckdb/.github/workflows/NotifyExternalRepositories.yml@notify-nightly-build-status
     secrets: inherit
     needs:
       - osx
@@ -76,7 +76,7 @@ jobs:
       should_publish: 'true'
 
   notify-specific-branch-on-external-repos:
-    uses: ./.github/workflows/NotifyExternalRepositories.yml@main
+    uses: hmeriann/duckdb/.github/workflows/NotifyExternalRepositories.yml@notify-nightly-build-status
     secrets: inherit
     needs:
       - osx
