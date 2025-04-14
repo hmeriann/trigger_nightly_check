@@ -37,7 +37,7 @@ jobs:
   python:
     runs-on: ubuntu-latest
     steps:
-      - run: return 1
+      - run: exit 1
   pyodide:
     runs-on: ubuntu-latest
     steps:
@@ -45,7 +45,7 @@ jobs:
   R:
     runs-on: ubuntu-latest
     steps:
-      - run: return 0
+      - run: exit 0
   Wasm:
     runs-on: ubuntu-latest
     steps:
@@ -93,7 +93,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - prepare-status
-    if: ${{ !inputs.git_ref }} 
+    if: ${{ !inputs.git_ref && always() }} 
     steps:
       - run: echo ${{ inputs.git_ref == '' }}
 
@@ -101,7 +101,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - prepare-status
-    if: ${{ !inputs.git_ref }} 
+    if: ${{ inputs.git_ref && always()}} 
     steps:
       - run: echo ${{ inputs.git_ref == '' }}
 
