@@ -22,17 +22,17 @@ jobs:
   osx:
     runs-on: ubuntu-latest
     steps:
-      - run: return 1
+      - run: pwd
 
   linux-release:
     runs-on: ubuntu-latest
     steps:
-      - run: return 0
+      - run: ls
 
   windows:
     runs-on: ubuntu-latest
     steps:
-      - run: return 0
+      - run: echo ${{ inputs.git_ref }}
 
   python:
     runs-on: ubuntu-latest
@@ -41,7 +41,7 @@ jobs:
   pyodide:
     runs-on: ubuntu-latest
     steps:
-      - run: return 0
+      - run: echo ${{ inputs.skip_tests }}
   R:
     runs-on: ubuntu-latest
     steps:
@@ -49,12 +49,12 @@ jobs:
   Wasm:
     runs-on: ubuntu-latest
     steps:
-      - run: return 0
+      - run: echo ${{ inputs.run_all }}
   
   static-libraries:
     runs-on: ubuntu-latest
     steps:
-      - run: return 1
+      - run: echo ${{ inputs.twine_upload }}
       
   prepare-status:
     runs-on: ubuntu-latest
