@@ -88,7 +88,7 @@ jobs:
             echo failure;
             echo "success=false" >> $GITHUB_OUTPUT;
           fi;
-          exit 0
+          echo ${{ inputs.git_ref == '' }}
 
   notify-external-repos-main:
     runs-on: ubuntu-latest
