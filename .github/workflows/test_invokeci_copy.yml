@@ -1,0 +1,107 @@
+name: COPY Test InvokeCI
+on:
+  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      override_git_describe:
+        type: string
+      git_ref:
+        type: string
+      skip_tests:
+        type: string
+      run_all:
+        type: string
+      twine_upload:
+        type: string
+
+concurrency:
+  group: invokeci-${{ github.workflow }}-${{ github.ref }}-${{ github.head_ref || '' }}-${{ github.base_ref || '' }}-${{ github.ref != 'refs/heads/main' || github.sha }}-${{ inputs.override_git_describe }}-${{ inputs.git_ref }}-${{ inputs.skip_tests }}
+  cancel-in-progress: true
+
+jobs:
+  osx:
+    runs-on: ubuntu-latest
+    steps:
+      - run: pwd
+
+  linux-release:
+    runs-on: ubuntu-latest
+    steps:
+      - run: ls
+
+  windows:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ${{ inputs.git_ref }}
+
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - run: return 1
+  pyodide:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ${{ inputs.skip_tests }}
+  R:
+    runs-on: ubuntu-latest
+    steps:
+      - run: return 0
+  Wasm:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ${{ inputs.run_all }}
+  
+  static-libraries:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ${{ inputs.twine_upload }}
+      
+  prepare-status:
+    runs-on: ubuntu-latest
+    if: always()
+    needs:
+      - osx
+      - linux-release
+      - windows
+      - python
+      - pyodide
+      - R
+      - Wasm
+      - static-libraries
+    outputs:
+      is-success: ${{ steps.set-output.outputs.success }}
+    steps:
+      - id: set-output
+        shell: bash
+        run:
+          if [[ ${{ needs.osx.result }} == 'success' && \
+                ${{ needs.linux-release.result }} == 'success' && \
+                ${{ needs.windows.result }} == 'success' && \
+                ${{ needs.python.result }} == 'success' && \
+                ${{ needs.pyodide.result }} == 'success' && \
+                ${{ needs.R.result }} == 'success' && \
+                ${{ needs.Wasm.result }} == 'success' && \
+                ${{ needs.static-libraries.result }} == 'success' ]]; then
+            echo success;
+            echo "success=true" >> $GITHUB_OUTPUT;
+          else
+            echo failure;
+            echo "success=false" >> $GITHUB_OUTPUT;
+          fi;
+          echo ${{ inputs.git_ref == '' }}
+
+  notify-external-repos-main:
+    runs-on: ubuntu-latest
+    needs:
+      - prepare-status
+    # if: ${{ inputs.git_ref == '' }} 
+    steps:
+      - run: echo ${{ inputs.git_ref == '' }}
+
+  notify-specific-branch-on-external-repos:
+    runs-on: ubuntu-latest
+    needs:
+      - prepare-status
+    # if: ${{ inputs.git_ref != '' }} 
+    steps:
+      - run: echo 🐶
