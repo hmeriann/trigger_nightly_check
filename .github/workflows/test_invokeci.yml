@@ -87,7 +87,7 @@ jobs:
           else
             echo failure
             echo "success=false" >> $GITHUB_OUTPUT;
-          fi
+          fi;
           exit 0
 
   notify-external-repos-main:
