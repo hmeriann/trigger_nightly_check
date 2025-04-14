@@ -72,6 +72,7 @@ jobs:
       is-success: ${{ steps.set-output.outputs.success }}
     steps:
       - id: set-output
+        shell: bash
         run:
           if [ "${{ needs.osx.result }}" == "success" ] && [ "${{ needs.linux-release.result }}" == "success" ] && [ "${{ needs.windows.result }}" == "success" ] && [ "${{ needs.python.result }}" == "success" ] && [ "${{ needs.pyodide.result }}" == "success" ] && [ "${{ needs.R.result }}" == "success" ] && [ "${{ needs.Wasm.result }}" == "success" ] && [ "${{ needs.static-libraries.result }}" == "success" ]; then
             echo "success=true" >> $GITHUB_OUTPUT
