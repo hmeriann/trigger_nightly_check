@@ -1,0 +1,95 @@
+name: Test InvokeCI
+on:
+  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      override_git_describe:
+        type: string
+      git_ref:
+        type: string
+      skip_tests:
+        type: string
+      run_all:
+        type: string
+      twine_upload:
+        type: string
+
+concurrency:
+  group: invokeci-${{ github.workflow }}-${{ github.ref }}-${{ github.head_ref || '' }}-${{ github.base_ref || '' }}-${{ github.ref != 'refs/heads/main' || github.sha }}-${{ inputs.override_git_describe }}-${{ inputs.git_ref }}-${{ inputs.skip_tests }}
+  cancel-in-progress: true
+
+jobs:
+  osx:
+    runs-on: ubuntu-latest
+    steps:
+      - run: return 1
+
+  linux-release:
+    runs-on: ubuntu-latest
+    steps:
+      - run: return 0
+
+  windows:
+    runs-on: ubuntu-latest
+    steps:
+      - run: return 0
+
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - run: return 1
+  pyodide:
+    runs-on: ubuntu-latest
+    steps:
+      - run: return 0
+  R:
+    runs-on: ubuntu-latest
+    steps:
+      - run: return 0
+  Wasm:
+    runs-on: ubuntu-latest
+    steps:
+      - run: return 0
+  
+  static-libraries:
+    runs-on: ubuntu-latest
+    steps:
+      - run: return 1
+      
+  notify-external-repos-main:
+    uses: ./hmeriann/duckdb/.github/workflows/NotifyExternalRepositories.yml
+    secrets: inherit
+    needs:
+      - osx
+      - linux-release
+      - windows
+      - python
+      - pyodide
+      - R
+      - Wasm
+      - static-libraries
+    if: ${{ inputs.git_ref == '' && always() }} 
+    with:
+      target-branch: ${{ github.ref_name }}
+      duckdb-sha: ${{ github.ref }}
+      triggering_event: ${{ github.event_name }}
+      should_publish: 'true'
+
+  notify-specific-branch-on-external-repos:
+    uses: ./.github/workflows/NotifyExternalRepositories.yml
+    secrets: inherit
+    needs:
+      - osx
+      - linux-release
+      - windows
+      - python
+      - pyodide
+      - R
+      - Wasm
+      - static-libraries
+    if: always()
+    with:
+      target-branch: ${{ github.ref_name }}
+      duckdb-sha: ${{ inputs.git_ref }}
+      triggering_event: ${{ github.event_name }}
+      should_publish: 'true'
