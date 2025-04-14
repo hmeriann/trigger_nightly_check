@@ -67,13 +67,25 @@ jobs:
       - R
       - Wasm
       - static-libraries
-    if: success()
+    if: failure()
     outputs:
       is-success: ${{ steps.set-output.outputs.success }}
     steps:
       - id: set-output
         run:
-          echo "success=true" >> $GITHUB_OUTPUT
+          if [ "${{ needs.osx.result }}" == "success" ] && \
+             [ "${{ needs.linux-release.result }}" == "success" ] && \
+             [ "${{ needs.linux-release.result }}" == "success" ] && \
+             [ "${{ needs.windows.result }}" == "success" ] && \
+             [ "${{ needs.python.result }}" == "success" ] && \
+             [ "${{ needs.pyodide.result }}" == "success" ] && \
+             [ "${{ needs.R.result }}" == "success" ] && \
+             [ "${{ needs.Wasm.result }}" == "success" ] && \
+             [ "${{ needs.static-libraries.result }}" == "success" ]; then
+            echo "success=true" >> $GITHUB_OUTPUT
+          else
+            echo "success=false" >> $GITHUB_OUTPUT
+          fi
 
   notify-external-repos-main:
     runs-on: ubuntu-latest
