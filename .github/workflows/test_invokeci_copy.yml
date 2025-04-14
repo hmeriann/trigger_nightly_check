@@ -90,6 +90,22 @@ jobs:
           fi;
           echo ${{ inputs.git_ref == '' }}
 
+  random-job:
+    runs-on: ubuntu-latest
+    needs:
+      - prepare-status
+    if: ${{ !inputs.git_ref }} 
+    steps:
+      - run: echo ${{ inputs.git_ref == '' }}
+
+  another-random-job:
+    runs-on: ubuntu-latest
+    needs:
+      - prepare-status
+    if: ${{ !inputs.git_ref }} 
+    steps:
+      - run: echo ${{ inputs.git_ref == '' }}
+
   notify-external-repos-main:
     runs-on: ubuntu-latest
     needs:
