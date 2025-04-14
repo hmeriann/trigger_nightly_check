@@ -96,7 +96,7 @@ jobs:
       - prepare-status
     if: ${{ inputs.git_ref == '' }} 
     steps:
-      - run: echo ${{ needs.prepare-status.outputs.is-success }}
+      - run: echo ${{ inputs.git_ref == '' }}
 
   notify-specific-branch-on-external-repos:
     runs-on: ubuntu-latest
@@ -104,4 +104,4 @@ jobs:
       - prepare-status
     if: ${{ inputs.git_ref != '' }} 
     steps:
-      - run: echo ${{ needs.prepare-status.outputs.is-success }}
+      - run: echo 🐶
