@@ -73,7 +73,7 @@ jobs:
     steps:
       - id: set-output
         shell: bash
-        run:
+        run: |
           if [[ ${{ needs.osx.result }} == 'success' && \
                 ${{ needs.linux-release.result }} == 'success' && \
                 ${{ needs.windows.result }} == 'success' && \
@@ -83,10 +83,10 @@ jobs:
                 ${{ needs.Wasm.result }} == 'success' && \
                 ${{ needs.static-libraries.result }} == 'success' ]]; then
             echo success;
-            echo "success=true" >> $GITHUB_OUTPUT;
+            echo "success=true" >> $GITHUB_OUTPUT
           else
             echo failure;
-            echo "success=false" >> $GITHUB_OUTPUT;
+            echo "success=false" >> $GITHUB_OUTPUT
           fi
 
   notify-external-repos-main:
